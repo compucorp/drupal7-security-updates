@@ -1,0 +1,22 @@
+name: Lint Dockerfile
+
+on:
+  push:
+    branches:
+     - "**"
+
+jobs:
+  linter:
+
+    runs-on: ubuntu-latest
+    container: hadolint/hadolint:latest-debian
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Lint Dockerfile
+        run : hadolint --config .hadolint.yml Dockerfile
+
+      - name: Run shellcheck (Bash scripts linter)
+        uses: ludeeus/action-shellcheck@0.4.1
