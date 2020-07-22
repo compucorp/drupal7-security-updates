@@ -36,15 +36,19 @@ curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/$repository/pulls");
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_USERAGENT, 'Drupal7-Security-Updates');
 curl_setopt($ch, CURLOPT_USERPWD, "$user:$token");
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(
-  [
-    'title' => 'Automated Security Updates',
-    'body' => $body,
-    'head' => $head,
-    'base' => 'master',
-    'labels' => ['security update']
-  ]
-));
+curl_setopt(
+    $ch,
+    CURLOPT_POSTFIELDS,
+    json_encode(
+        [
+            'title' => 'Automated Security Updates',
+            'body' => $body,
+            'head' => $head,
+            'base' => 'master',
+            'labels' => ['security update']
+        ]
+    )
+);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 $output = curl_exec($ch);
 if ($output === false) {
@@ -55,31 +59,30 @@ if ($output === false) {
     exit(1);
 }
 curl_close($ch);
-$output = json_decode($output);
+$output = json_decode($output, false);
 
 if (empty($output)) {
     throw new RuntimeException('Empty Response!');
 }
 
-if(!empty($output->html_url)) {
+if (!empty($output->html_url)) {
     echo $output->html_url;
     exit();
 }
 
 /*
- * If there are any errors other than that the Pull Request already exists, we
- * throw an error.
+ * If there are any errors other than that the Pull Request already exists, we throw an error.
  *
- * It's not easy to check if a PR for a branch already exists, so, instead, we
- * simply always try to create one and ignore the error.
+ * It's not easy to check if a PR for a branch already exists, so, instead, we simply always
+ * try to create one and ignore the error.
  */
-if(!empty($output->errors)) {
+if (!empty($output->errors)) {
     $repoOwner = explode('/', $repository)[0];
     foreach ($output->errors as $error) {
         if (empty($error->message)) {
             throw new RuntimeException('Unknown API error!');
         }
-        if($error->message !== "A pull request already exists for $repoOwner:$head.") {
+        if ($error->message !== "A pull request already exists for $repoOwner:$head.") {
             throw new RuntimeException('Error creating pull request: ' . $error->message);
         }
     }

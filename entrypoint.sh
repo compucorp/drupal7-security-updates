@@ -64,7 +64,7 @@ git push "${remote_repo}" HEAD:$security_updates_branch
 echo "::set-output name=branch::$security_updates_branch"
 
 # Let people know how the branch was created and how to fix conflicts, if there are any
-[ $base_branch_or_tag != "master" ] && printf "\n\nImportant note: This update was created from a tag. Conflicts are expected in case \`master\` is ahead the tag. If that is the case, the conflicts should be manually fixed in a new branch" >> /update-message.txt
+[ $base_branch_or_tag != "master" ] && printf "\n\n*Important note*: This update was created from the %s tag. Conflicts are expected in case \`master\` is ahead the tag. If that is the case, the conflicts should be manually fixed in a new branch" $base_branch_or_tag >> /update-message.txt
 
 pull_request_url=$(php /create-pull-request.php -h $security_updates_branch < /update-message.txt)
 
