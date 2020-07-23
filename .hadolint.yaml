@@ -1,0 +1,2 @@
+ignored:
+  - DL3007 # ignoring because it's ok-ish to depend on latest here, as it's one of our internal images

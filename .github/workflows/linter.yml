@@ -1,0 +1,27 @@
+name: Run Linters
+
+on:
+  push:
+    branches:
+     - "**"
+
+jobs:
+  linters:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Lint Dockerfile
+        run: |
+          curl -L https://github.com/hadolint/hadolint/releases/download/v1.18.0/hadolint-Linux-x86_64 -o hadolint
+          chmod +x hadolint
+          ./hadolint Dockerfile
+
+      - name: Run shellcheck (Bash scripts linter)
+        run: shellcheck *.sh
+
+      - name: Run PHP CodeSniffer
+        run: composer install && ./vendor/bin/phpcs .
