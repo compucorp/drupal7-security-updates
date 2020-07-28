@@ -9,7 +9,11 @@ $token = getenv('GITHUB_TOKEN');
 $repository = getenv('GITHUB_REPOSITORY');
 $body = file_get_contents('php://stdin');
 
-['h' => $head] = getopt('h:');
+$opts = getopt('h:');
+
+if (empty($opts['h'])) {
+    throw new RuntimeException('Head branch not specified!');
+}
 
 if (empty($user)) {
     throw new RuntimeException('GITHUB_ACTOR not set!');
@@ -27,9 +31,7 @@ if (empty($body)) {
     throw new RuntimeException('Update message empty!');
 }
 
-if (empty($head)) {
-    throw new RuntimeException('Head branch not specified!');
-}
+$head = $opts['h'];
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, "https://api.github.com/repos/$repository/pulls");

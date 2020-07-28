@@ -1,4 +1,4 @@
-FROM compucorp/civicrm-buildkit:latest
+FROM compucorp/civicrm-buildkit:1.0.0-php5.6
 
 COPY entrypoint.sh /entrypoint.sh
 COPY settings.php /settings.php
