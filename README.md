@@ -14,7 +14,7 @@ containing a valid schema (anonymized or not) for the site in the workflow repo.
 [compucorp/mysql-anondb](https://github.com/compucorp/mysql-anondb-docker) for that.
 
 Since the action includes some logic based on the existence of tags and branches, it cannot be used in a shallow clone. 
-Make sure of adding `fetch-depth: 0` to your step reponsible for checking out the code.
+Make sure of adding `fetch-depth: 0` to your step responsible for checking out the code.
 
 ## Usage
 
@@ -48,9 +48,9 @@ jobs:
 
       - name: Security updates
         id: security-updates
-        uses: compucorp/drupal7-security-updates@v1.0.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        uses: docker://compucorp/drupal7-security-updates-action:1.0.0-php7.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 The action will always consider the latest tag as the base for security updates. This is based on the assumption that 
@@ -60,6 +60,11 @@ instead.
 If there are security updates available, they will be pushed to a branch named `<tag or master>_security_updates`. A 
 Pull Request will also be created targetting `master`. Both the commit and the Pull Request will contain a list of all 
 the modules which have been updated, including their current version and the version they have been updated to.
+
+For projects that require CiviCRM, there's also a `CIVICRM_ROOT` variable that can be useful. The image ships with a 
+standard `civicrm.settings.php` file, which will be used while setting up the site for updates. The variable 
+specifies the root directory of CiviCRM. By default, it points to `sites/all/modules/civicrm`, but, if necessary, the 
+variable can be set to point to a different location.
 
 ## Notifying about updates
 
@@ -89,3 +94,16 @@ Slack:
 Note that in order to be able to access the output of a step, you need to give it an `id` (`security-updates` in this 
 case). Also note that `branch` will be empty in case no security updates were applied. We can use that inside an `if` 
 and avoid sending the notification in case nothing was updated.
+
+## Building and Pushing images
+
+There's a `build.sh` script that will automatically build and push all the variants available for the image. Here's an 
+example of how to build images for version 1.2.0:
+
+```shell script
+./build.sh 1.2.0
+```
+
+This will generate the following images:
+- compucorp/drupal7-security-updates-action:1.2.0-php7.2
+- compucorp/drupal7-security-updates-action:1.2.0-php5.6

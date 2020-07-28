@@ -1,8 +1,8 @@
-FROM compucorp/civicrm-buildkit:latest
+ARG php_version=7.2
+FROM compucorp/civicrm-buildkit:1.0.0-php${php_version}
 
-COPY entrypoint.sh /entrypoint.sh
-COPY settings.php /settings.php
-COPY build-update-message.php /build-update-message.php
-COPY create-pull-request.php /create-pull-request.php
+ENV CIVICRM_ROOT sites/all/modules/civicrm
+
+COPY [ "entrypoint.sh", "*.php", "/" ]
 
 ENTRYPOINT ["/entrypoint.sh"]
