@@ -1,18 +1,15 @@
 #!/usr/bin/env bash
 
-# Copies a settings file with some predefined database configuration
-# which assumes this action will run in a workflow containing a
-# service named "mysql", running MySQL with a valid database for
-# the site we want to apply the security updates to. The database name
-# is assumed to be "drupal".
-cp /settings.php "$GITHUB_WORKSPACE/sites/default/settings.php"
-
 set -x
 
-# $1 is the github_token param passed to the action via
-[ -z "$1" ] && echo "Missing Github Token" && exit 1
+# Copies settings files with some predefined database configuration
+# which assumes this action will run in a workflow containing a
+# service named "mysql", running MySQL with valid databases for
+# the site we want to apply the security updates to. The database names
+# are assumed to be "drupal" and "civicrm".
+cp /{,civicrm.}settings.php "$GITHUB_WORKSPACE/sites/default/"
 
-export GITHUB_TOKEN=$1
+[ -z "$GITHUB_TOKEN" ] && echo "Missing Github Token" && exit 1
 
 git fetch origin --tags
 

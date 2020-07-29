@@ -1,10 +1,6 @@
 # action.yml
 name: 'Drupal 7 Security Updates'
 description: 'Automatically apply security updates to a Drupal 7 site'
-inputs:
-  github_token:
-    description: 'Token for the repo. Can be passed in using $\{{ secrets.GITHUB_TOKEN }}'
-    required: true
 outputs:
   branch:
     description: 'The branch to which the security updates have been pushed'
@@ -13,5 +9,3 @@ outputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-    - ${{ inputs.github_token }}
