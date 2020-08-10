@@ -85,7 +85,23 @@ git push "${remote_repo}" HEAD:$security_updates_branch
 echo "::set-output name=branch::$security_updates_branch"
 
 # Let people know how the branch was created and how to fix conflicts, if there are any
-[ $base_branch_or_tag != "master" ] && printf "\n\n*Important note*: This update was created from the %s tag. Conflicts are expected in case \`master\` is ahead the tag. If that is the case, the conflicts should be manually fixed in a new branch" $base_branch_or_tag >> /update-message.txt
+if [ $base_branch_or_tag != "master" ]
+then
+  (cat <<PRNOTE
+
+## Important notes
+
+This update was created from the \`$base_branch_or_tag\` tag. Conflicts are expected in case \`master\` is ahead the tag. If that is the case, the conflicts should be manually fixed in a new branch.
+
+Also, keep in mind that the diff displayed by github might not reflect the reality. This is due to [how Github does the comparisons](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-comparing-branches-in-pull-requests#three-dot-and-two-dot-git-diff-comparisons):
+
+> By default, pull requests on GitHub show a three-dot diff, or a comparison between the most recent version of the topic branch and the commit where the topic branch was last synced with the base branch.
+
+In other words, the comparison will show the differences between the security updates branch and master, as it was when the tag was created rather than **how it is today**. This might end up in Github saying the Pull Request can be merged successfully, while it actually has conflicts. To fix this, you'll need to rebase the security updates branch on top of \`master\`.
+PRNOTE
+) >> /update-message.txt
+
+fi
 
 pull_request_url=$(php /create-pull-request.php -h $security_updates_branch < /update-message.txt)
 
