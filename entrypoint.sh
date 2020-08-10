@@ -55,6 +55,17 @@ drush pm-updatestatus --security-only --format=csv | php /build-update-message.p
 
 # Do the actual update of modules
 drush pm-updatecode --security-only -y
+
+# Drupal core updates will revert any customizations made to the .gitignore
+# file, so we need to make sure of undoing that. It's safe to always run
+# this, as it will just exit silently if there are no changes
+# See: https://www.drupal.org/project/drupal/issues/1170538
+git checkout -- .gitignore
+
+# Let's remove the settings files created by this script so they won't get
+# committed by mistake in case they are not ignored by git
+rm -f "$GITHUB_WORKSPACE/sites/default/"{,civicrm.}settings.php
+
 git add .
 
 # Exit if there are no changes to be committed (i.e. no security updates)
