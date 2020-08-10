@@ -53,6 +53,9 @@ drush updb -y
 # a nice update message for the commit and Pull Request
 drush pm-updatestatus --security-only --format=csv | php /build-update-message.php > /update-message.txt
 
+# Exit if the update message is empty (i.e. no security updates available)
+[ ! -s /update-message.txt ] && exit 0
+
 # Do the actual update of modules
 drush pm-updatecode --security-only -y
 
