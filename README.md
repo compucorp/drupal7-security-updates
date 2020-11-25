@@ -66,6 +66,26 @@ standard `civicrm.settings.php` file, which will be used while setting up the si
 specifies the root directory of CiviCRM. By default, it points to `sites/all/modules/civicrm`, but, if necessary, the 
 variable can be set to point to a different location.
 
+### Local testing
+
+This project assumes it will be executed as part of a Github Actions workflow. Because of that, it has some certain 
+requirements to be able to run and it assumes all of them will be met whenever it gets executed. Unfortunately, 
+this makes is really difficult to test it locally, as you would need to manually create docker containers, set 
+environment variables, and clone repositories.
+
+You can use the `test.sh` script to make this process a little bit easier. It will take care of:
+
+- Checking if the necessary environment variables are available
+- Clone the repository following an approach similar to what Github Actions does
+- Initialize a local mysql-anondb container
+- Run the drupal7-security-update container (which in fact will run the action itself)
+
+For more details on how to run the script, simply run `test.sh` without any params.
+
+Note that this was developed only for simple troubleshooting and doesn't fully replicate what Github Actions does. For 
+example, the script doesn't clean things up after it finishes. If you want to run it multiple times, you'll need to 
+manually remove the `mysql` container and cloned repositories inside `workdir`.
+
 ## Notifying about updates
 
 The action isn't responsible for any kind of notification itself, but it exposes 2 outputs (`branch` and `pull-request`), 
