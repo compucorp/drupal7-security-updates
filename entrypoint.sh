@@ -31,6 +31,19 @@ else
     git checkout $security_updates_branch
 fi
 
+# The action is supposed to be run together with a mysql-anondb
+# container.
+# The db in this container might have these variables set to a
+# directory that is not available during the execution of the
+# script, so we force them to point to a location that:
+# 1) We're sure it exists
+# 2) We know we have write/read permissions
+#
+# Without this, we might run into permission issues while running
+# commands like drush cc or updb
+drush vset file_temporary_path /tmp
+drush vset file_private_path /tmp
+
 # Since we've switched to a new branch, let's first run basic updates
 # to ensure we'll be able to check for modules updates
 drush cc all
